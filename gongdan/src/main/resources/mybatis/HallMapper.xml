@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ The MIT License (MIT)
+  ~
+  ~ Copyright (c) 2014-2016 abel533@gmail.com
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in
+  ~ all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  ~ THE SOFTWARE.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.net.gongdan.dao.HallMapper">
+
+    <resultMap id="hallMapper" type="com.net.gongdan.model.HallModel">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="axis_x" column="axis_x"/>
+        <result property="axis_y" column="axis_y"/>
+    </resultMap>
+
+    <resultMap id="gongdanMapper" type="com.net.gongdan.model.GongdanModel">
+        <result property="pc_id" column="pc_id"/>
+        <result property="gd_id" column="gd_id"/>
+        <result property="acc_nbr" column="acc_nbr"/>
+        <result property="org5_name" column="org5_name"/>
+    </resultMap>
+
+    <resultMap id="paidanbociMapper" type="com.net.gongdan.model.PaidanbociModel">
+        <result property="pc_id" column="波次号"/>
+        <result property="pd_type" column="派单类型"/>
+        <result property="main_type" column="工单大类"/>
+        <result property="pd_time" column="派单时间"/>
+        <result property="exec_time" column="到期时间"/>
+        <result property="gd_count" column="工单总量"/>
+        <result property="todo_count" column="待处理"/>
+        <result property="doing_count" column="处理中"/>
+        <result property="done_count" column="已处理"/>
+        <result property="done_rate" column="工单处理率"/>
+        <result property="contact_success" column="客户接触成功工单"/>
+        <result property="agree_pd" column="用户同意派单办理"/>
+        <result property="agree_tohall" column="用户同意去营业厅办理"/>
+        <result property="agree_total" column="用户有意办理"/>
+        <result property="success_rate" column="意向成功率"/>
+        <result property="pd_kj" column="派单口径"/>
+    </resultMap>
+
+
+
+
+    <sql id="all_fields">
+        name,axis_x,axis_y
+    </sql>
+
+    <select id="countList" resultType="Integer">
+        select count(1)
+        from hall_info
+        where 1=1
+    </select>
+
+    <select id="findHallById" parameterType="java.util.Map" resultMap="hallMapper">
+        SELECT id,
+        <include refid="all_fields"/>
+        FROM hall_info
+        where ID=#{id}
+    </select>
+
+    <select id="findGongdanById" parameterType="java.util.Map" resultMap="gongdanMapper">
+        select pc_id,gd_id,acc_nbr,org5_name
+        from zhyy_gd_detail
+        where 1=1 and org5_name=#{gd_id}
+    </select>
+
+    <select id ="countGongdanByTime" parameterType= "java.util.Map" statementType="CALLABLE" >
+        <!--注明statementType="CALLABLE"表示调用存储过程-->
+        {call ZHYY_MXY_STATISTIC(#{start_time, jdbcType=VARCHAR, mode=IN},
+        #{end_time, jdbcType=VARCHAR, mode=IN},
+        #{sql_where, jdbcType=VARCHAR, mode=IN},
+        #{result, mode=OUT, jdbcType=CURSOR, resultMap=paidanbociMapper})}
+        <!--传入传出参数要注明mode=IN/OUT 并要注明jdbcType（在网上可以查询mybatis支持哪些jdbcType类型），返回参数要注明对应的resultMap-->
+    </select >
+
+
+
+</mapper>

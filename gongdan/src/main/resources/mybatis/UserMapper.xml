@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ The MIT License (MIT)
+  ~
+  ~ Copyright (c) 2014-2016 abel533@gmail.com
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in
+  ~ all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  ~ THE SOFTWARE.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.net.gongdan.dao.UserMapper">
+
+    <resultMap id="userMapper" type="com.net.gongdan.model.UserModel">
+        <result property="staff_id" column="staff_id"/>
+        <result property="staff_name" column="staff_name"/>
+        <result property="sex" column="sex"/>
+        <result property="enable" column="enable"/>
+        <result property="login_id" column="login_id"/>
+        <result property="telephone" column="telphone"/>
+        <result property="org_id" column="org_id"/>
+        <result property="org_name" column="org_name"/>
+        <result property="staff_role" column="staff_role"/>
+        <result property="gd_check_limit" column="gd_check_limit"/>
+    </resultMap>
+
+    <select id="findUserByStaffIdAndPassword" parameterType="com.net.gongdan.query.UserQuery" resultMap="userMapper">
+        select staff_id,staff_name,sex,enable,login_id,telphone,org_id,org_name,staff_role,gd_check_limit
+        from zhyy_staff
+        where 1=1
+        <if test="staff_id != null">and staff_id = #{staff_id}</if>
+        <if test="password != null">and password = #{password}</if>
+    </select>
+
+
+
+
+
+</mapper>

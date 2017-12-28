@@ -1,0 +1,12 @@
+spring:
+                    profiles:
+                       active: a
+                    datasource:
+                        driver-class-name: oracle.jdbc.OracleDriver
+                        url: jdbc:oracle:thin:@134.161.9.113:1521/yxzcdb1
+                        username: khwx
+                        password: khwx1122qw
+                    jpa:
+                      hibernate:
+                        ddl-auto: update
+                      show-sql: true

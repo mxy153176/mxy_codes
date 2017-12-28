@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ The MIT License (MIT)
+  ~
+  ~ Copyright (c) 2014-2016 abel533@gmail.com
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in
+  ~ all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  ~ THE SOFTWARE.
+  -->
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.net.gongdan.dao.GoodsMapper">
+
+    <resultMap id="goodsMapper" type="com.net.gongdan.model.GoodsModel">
+        <result property="id" column="ID"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <result property="goodsName" column="GOODS_NAME"/>
+        <result property="price" column="PRICE"/>
+        <result property="sellerId" column="SELLER_ID"/>
+        <result property="status" column="STATUS"/>
+        <result property="productionPlace" column="PRODUCTION_PLACE"/>
+        <result property="type" column="GOODS_TYPE"/>
+        <result property="desc" column="GOODS_DESCRIBE"/>
+    </resultMap>
+
+
+    <sql id="all_fields">
+        CREATE_TIME, UPDATE_TIME, GOODS_NAME,PRICE, SELLER_ID, STATUS, PRODUCTION_PLACE, GOODS_TYPE,GOODS_DESCRIBE
+    </sql>
+
+    <select id="queryList" parameterType="com.net.gongdan.query.GoodsQuery" resultMap="goodsMapper">
+        SELECT ID,
+        <include refid="all_fields"/>
+        FROM goods
+        where 1=1
+        <if test="goodsName != null">AND GOODS_NAME like CONCAT('%',#{goodsName}, '%')</if>
+        <if test="sellerId != null">AND SELLER_ID = #{sellerId}</if>
+        <if test="status != null">AND status = #{status}</if>
+        <if test="type != null">AND GOODS_TYPE = #{type}</if>
+        ORDER BY UPDATE_TIME DESC
+        limit #{startRow}, #{pageSize}
+    </select>
+
+
+    <select id="countList" resultType="Integer"
+            parameterType="com.net.gongdan.query.GoodsQuery">
+        select count(1)
+        from goods
+        where 1=1
+        <if test="goodsName != null">AND GOODS_NAME like CONCAT('%',#{goodsName}, '%')</if>
+        <if test="sellerId != null">AND SELLER_ID = #{sellerId}</if>
+        <if test="status != null">AND status = #{status}</if>
+        <if test="type != null">AND GOODS_TYPE = #{type}</if>
+    </select>
+
+    <insert id="insertGoods" parameterType="com.net.gongdan.model.GoodsModel">
+        INSERT INTO goods(
+        <include refid="all_fields"/>
+        )
+        VALUES(NOW(), NOW(), #{goodsName}, #{price}, #{sellerId},
+        #{status}, #{productionPlace},
+        #{type}, #{desc})
+    </insert>
+
+
+    <update id="updateGoods" parameterType="com.net.gongdan.model.GoodsModel">
+        UPDATE goods
+        SET UPDATE_TIME = NOW()
+        <if test="goodsName != null">, GOODS_NAME = #{goodsName}</if>
+        <if test="sellerId != null">, SELLER_ID = #{sellerId}</if>
+        <if test="status != null">, STATUS = #{status}</if>
+        <if test="type != null">, GOODS_TYPE = #{type}</if>
+        <if test="productionPlace != null">, PRODUCTION_PLACE = #{productionPlace}</if>
+        <if test="desc != null">, GOODS_DESCRIBE = #{desc}</if>
+        WHERE ID=#{id}
+    </update>
+
+    <select id="findGoodsById" parameterType="java.util.Map" resultMap="goodsMapper">
+        SELECT ID,
+        <include refid="all_fields"/>
+        FROM goods
+        where ID=#{id}
+    </select>
+
+    <delete id="deleteGoods" parameterType="java.util.Map">
+
+      DELETE from goods     where ID=#{id}
+
+    </delete>
+
+</mapper>
